@@ -135,8 +135,8 @@ private: // private access
                     context.mContext.setIndexes(impl::createIndexes(handle));
                 }
                 try {
-                    auto snapshot = handle.startTransaction(type);
-                    Transaction transaction(handle, context.mContext, std::move(snapshot), type);
+                    auto clusterState = handle.startTransaction(type);
+                    Transaction transaction(handle, context.mContext, std::move(clusterState->snapshot), type);
                     context.executeHandler(fun, transaction);
                 } catch (std::exception& e) {
                     std::cerr << "Exception: " << e.what() << std::endl;
@@ -151,8 +151,8 @@ private: // private access
                     context.mContext.setIndexes(impl::createIndexes(handle));
                 }
                 try {
-                    auto snapshot = handle.startTransaction(type);
-                    Transaction transaction(handle, context.mContext, std::move(snapshot), type);
+                    auto clusterState = handle.startTransaction(type);
+                    Transaction transaction(handle, context.mContext, std::move(clusterState->snapshot), type);
                     context.executeHandler(fun, transaction);
                 } catch (std::exception& e) {
                     std::cerr << "Exception: " << e.what() << std::endl;
