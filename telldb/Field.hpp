@@ -50,6 +50,7 @@ class Field {
         int16_t smallint;
         int32_t normalint;
         int64_t bigint;
+        unsigned __int128 hash128;
         float floatNr;
         double doubleNr;
     };
@@ -66,6 +67,10 @@ public:
     Field(int64_t value)
         : mType(store::FieldType::BIGINT)
         , bigint(value)
+    {}
+    Field(unsigned __int128 value)
+        : mType(store::FieldType::HASH128)
+        , hash128(value)
     {}
     Field(float value)
         : mType(store::FieldType::FLOAT)
@@ -102,6 +107,9 @@ public:
             return;
         case store::FieldType::BIGINT:
             bigint = other.bigint;
+            return;
+        case store::FieldType::HASH128:
+            hash128 = other.hash128;
             return;
         case store::FieldType::FLOAT:
             floatNr = other.floatNr;
@@ -141,6 +149,9 @@ public:
             break;
         case store::FieldType::BIGINT:
             bigint = other.bigint;
+            break;
+        case store::FieldType::HASH128:
+            hash128 = other.hash128;
             break;
         case store::FieldType::FLOAT:
             floatNr = other.floatNr;
@@ -188,6 +199,11 @@ public:
     typename std::enable_if<std::is_same<T, int64_t>::value, int64_t&>::type
     value() {
         return bigint;
+    }
+    template<class T>
+    typename std::enable_if<std::is_same<T, unsigned __int128>::value, unsigned __int128&>::type
+    value() {
+        return hash128;
     }
     template<class T>
     typename std::enable_if<std::is_same<T, float>::value, float&>::type

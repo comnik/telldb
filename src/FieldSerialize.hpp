@@ -44,6 +44,8 @@ struct size_policy<Archiver, tell::db::Field>
             return res + 4;
         case tell::store::FieldType::BIGINT:
             return res + 8;
+        case tell::store::FieldType::HASH128:
+            return res + 16;
         case tell::store::FieldType::FLOAT:
             return res + 4;
         case tell::store::FieldType::DOUBLE:
@@ -74,6 +76,9 @@ struct serialize_policy<Archiver, tell::db::Field>
             break;
         case tell::store::FieldType::BIGINT:
             ar & field.value<int64_t>();
+            break;
+        case tell::store::FieldType::HASH128:
+            ar & field.value<unsigned __int128>();
             break;
         case tell::store::FieldType::FLOAT:
             ar & field.value<float>();
@@ -119,6 +124,13 @@ struct deserialize_policy<Archiver, tell::db::Field>
         case tell::store::FieldType::BIGINT:
             {
                 int64_t value;
+                ar & value;
+                field = tell::db::Field(value);
+            }
+            break;
+        case tell::store::FieldType::HASH128:
+            {
+                unsigned __int128 value;
                 ar & value;
                 field = tell::db::Field(value);
             }

@@ -48,6 +48,8 @@ bool Field::operator< (const Field& rhs) const {
         return normalint < rhs.normalint;
     case FieldType::BIGINT:
         return bigint < rhs.bigint;
+    case FieldType::HASH128:
+        return hash128 < rhs.hash128;    
     case FieldType::FLOAT:
         return floatNr < rhs.floatNr;
     case FieldType::DOUBLE:
@@ -95,6 +97,9 @@ Field& Field::operator+= (const Field& rhs) {
     case FieldType::BIGINT:
         bigint += rhs.bigint;
         return *this;
+    case FieldType::HASH128:
+        hash128 += rhs.hash128;
+        return *this;
     case FieldType::FLOAT:
         floatNr += rhs.floatNr;
         return *this;
@@ -128,6 +133,9 @@ Field& Field::operator-= (const Field& rhs) {
         return *this;
     case FieldType::BIGINT:
         bigint -= rhs.normalint;
+        return *this;
+    case FieldType::HASH128:
+        hash128 -= rhs.hash128;
         return *this;
     case FieldType::FLOAT:
         floatNr -= rhs.floatNr;

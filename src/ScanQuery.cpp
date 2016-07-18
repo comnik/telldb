@@ -115,6 +115,9 @@ void ScanQuery::serializeSelection(std::unique_ptr<char[]>& result, uint32_t& si
                 // another 8 bytes
                 size += 8;
                 break;
+            case store::FieldType::HASH128:
+                size += 16;
+                break;
             case store::FieldType::BLOB:
             case store::FieldType::TEXT:
                 size += field.value<crossbow::string>().size();
@@ -160,6 +163,10 @@ void ScanQuery::serializeSelection(std::unique_ptr<char[]>& result, uint32_t& si
             case store::FieldType::BIGINT:
                 w.set(0, 4);
                 w.write(field.value<int64_t>());
+                break;
+            case store::FieldType::HASH128:
+                w.set(0, 8);
+                w.write(field.value<unsigned __int128>());
                 break;
             case store::FieldType::DOUBLE:
                 w.set(0, 4);
