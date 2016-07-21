@@ -254,9 +254,10 @@ void Transaction::writeUndoLog(std::pair<size_t, uint8_t*> log) {
             LOG_ASSERT(res, "Writeback did not succeed");
         }
     } else {
-        auto resp = mHandle.insert(mContext.clientTable->txTable(), key, 0, {
-                std::make_pair("value", crossbow::string(reinterpret_cast<char*>(log.second), log.first))
-                });
+        auto resp = mHandle.insert(
+            mContext.clientTable->txTable(), key, 0, 
+            { std::make_pair("value", crossbow::string(reinterpret_cast<char*>(log.second), log.first)) }
+        );
         __attribute__((unused)) auto res = resp->waitForResult();
         LOG_ASSERT(res, "Writeback did not succeed");
     }

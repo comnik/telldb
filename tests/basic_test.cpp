@@ -57,7 +57,7 @@ int main(int argc, const char** argv) {
     crossbow::logger::logger->config.level = crossbow::logger::logLevelFromString("DEBUG");
     tell::store::ClientConfig config;
     config.commitManager = config.parseCommitManager(commitManager);
-    config.setStores(config.parseTellStore(storageNodes));
+    config.tellStore = config.parseTellStore(storageNodes);
     tell::db::ClientManager<void> clientManager(config);
 
     // Populate simple test db

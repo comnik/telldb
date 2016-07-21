@@ -242,7 +242,11 @@ public:
     {
         store::TransactionRunner::executeBlocking(mClientManager,
                 [this](store::ClientHandle &handle, impl::FiberContext<Context>&){
+            auto clusterState = handle.startTransaction();
+            
             mClientTable.init(handle);
+            
+            handle.commit(*clusterState->snapshot);
         });
     }
 
