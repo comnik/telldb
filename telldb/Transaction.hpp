@@ -25,6 +25,7 @@
 #include "Types.hpp"
 #include "Iterator.hpp"
 
+#include <commitmanager/HashRing.hpp>
 #include <tellstore/TransactionType.hpp>
 #include <tellstore/ClientSocket.hpp>
 #include <crossbow/ChunkAllocator.hpp>

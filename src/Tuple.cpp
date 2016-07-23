@@ -46,7 +46,7 @@ Field deserialize(const char* data, tell::store::FieldType type, const char* fie
         LOG_ASSERT(reinterpret_cast<uintptr_t>(field) % alignof(int32_t) == 0u, "Pointer to field must be aligned");
         return int32_t(*reinterpret_cast<const int32_t*>(field));
     case FieldType::HASH128:
-        LOG_ASSERT(reinterpret_cast<uintptr_t>(field) % alignof(unsigned __int128) == 0u, "Pointer to field must be aligned");
+        LOG_ASSERT(reinterpret_cast<uintptr_t>(field) % alignof(uint64_t) == 0u, "Pointer to field must be aligned");
         return (unsigned __int128)(*reinterpret_cast<const unsigned __int128*>(field));
     case FieldType::BIGINT:
         LOG_ASSERT(reinterpret_cast<uintptr_t>(field) % alignof(int64_t) == 0u, "Pointer to field must be aligned");
@@ -173,7 +173,7 @@ void Tuple::serialize(char* dest) const {
                 *reinterpret_cast<int64_t*>(current) = value.value<int64_t>();
             } break;
             case FieldType::HASH128: {
-                LOG_ASSERT(reinterpret_cast<uintptr_t>(current) % alignof(unsigned __int128) == 0u,
+                LOG_ASSERT(reinterpret_cast<uintptr_t>(current) % alignof(uint64_t) == 0u,
                         "Pointer to field must be aligned");
                 *reinterpret_cast<unsigned __int128*>(current) = value.value<unsigned __int128>();
             } break;
