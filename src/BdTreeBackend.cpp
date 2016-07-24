@@ -125,6 +125,7 @@ bool BdTreeBaseTable::doRemove(uint64_t key, uint64_t version, std::error_code& 
 store::Table BdTreePointerTable::createTable(store::ClientHandle& handle, const crossbow::string& name) {
     store::Schema schema(store::TableType::NON_TRANSACTIONAL);
     schema.addField(store::FieldType::BIGINT, gPointerFieldName, true);
+    schema.addField(store::FieldType::HASH128, "__partition_key", true);
 
     return handle.createTable(name, std::move(schema));
 }
@@ -160,6 +161,7 @@ void BdTreePointerTable::remove(bdtree::logical_pointer lptr, uint64_t version, 
 store::Table BdTreeNodeTable::createTable(store::ClientHandle& handle, const crossbow::string& name) {
     store::Schema schema(store::TableType::NON_TRANSACTIONAL);
     schema.addField(store::FieldType::BLOB, gNodeFieldName, true);
+    schema.addField(store::FieldType::HASH128, "__partition_key", true);
 
     return handle.createTable(name, std::move(schema));
 }
