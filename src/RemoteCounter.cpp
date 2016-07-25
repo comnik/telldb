@@ -95,11 +95,18 @@ void RemoteCounter::requestNewBatch(store::ClientHandle& handle) {
         if (getFuture->waitForResult()) {
             auto tuple = getFuture->get();
             nextCounter = static_cast<uint64_t>(mCounterTable->field<int64_t>(gCounterFieldName, tuple->data()));
-            counterFuture = handle.update(*mCounterTable, mCounterId, tuple->version(),
-                    createCounterTuple(nextCounter + RESERVED_BATCH));
+            
+            auto counterTuple = createCounterTuple(nextCounter + RESERVED_BATCH);
+            counterTuple["__partition_key"] = handle.getPartitionToken(*mCounterTable, mCounterId);
+
+            counterFuture = handle.update(*mCounterTable, mCounterId, tuple->version(), std::move(counterTuple));
         } else if (getFuture->error() == store::error::not_found) {
             nextCounter = 0x0u;
-            counterFuture = handle.insert(*mCounterTable, mCounterId, 0x0u, createCounterTuple(RESERVED_BATCH));
+
+            auto counterTuple = createCounterTuple(RESERVED_BATCH);
+            counterTuple["__partition_key"] = handle.getPartitionToken(*mCounterTable, mCounterId);
+            
+            counterFuture = handle.insert(*mCounterTable, mCounterId, 0x0u, std::move(counterTuple));
         } else {
             throw std::system_error(getFuture->error());
         }

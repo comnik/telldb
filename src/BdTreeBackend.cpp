@@ -80,6 +80,7 @@ std::unique_ptr<store::Tuple> BdTreeBaseTable::doRead(uint64_t key, std::error_c
 }
 
 bool BdTreeBaseTable::doInsert(uint64_t key, store::GenericTuple tuple, std::error_code& ec) {
+    tuple["__partition_key"] = mHandle.getPartitionToken(mTable, key);
     auto insertFuture = mHandle.insert(mTable.table(), key, 0x0u, std::move(tuple));
     if (insertFuture->waitForResult()) {
         return true;

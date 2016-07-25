@@ -67,9 +67,11 @@ void ClientTable::init(store::ClientHandle& handle) {
         // the client id is simply a random number
         mClientId = dist(rd);
         // try to insert the client
-        auto insertResp = handle.insert(*mClientsTable,
-                mClientId, 0,
-                store::GenericTuple{std::make_pair("value", crossbow::string())});
+        auto tuple = store::GenericTuple({
+            std::make_pair<crossbow::string, boost::any>("value", crossbow::string()),
+            std::make_pair<crossbow::string, boost::any>("__partition_key", handle.getPartitionToken(*mClientsTable, mClientId))
+        });
+        auto insertResp = handle.insert(*mClientsTable, mClientId, 0, tuple);
         if (!insertResp->error()) {
             break;
         }
