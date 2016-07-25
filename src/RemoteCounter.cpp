@@ -39,7 +39,6 @@ store::GenericTuple createCounterTuple(uint64_t counter) {
 std::shared_ptr<store::Table> RemoteCounter::createTable(store::ClientHandle& handle, const crossbow::string& name) {
     store::Schema schema(store::TableType::NON_TRANSACTIONAL);
     schema.addField(store::FieldType::BIGINT, gCounterFieldName, true);
-    schema.addField(store::FieldType::HASH128, "__partition_key", true);
 
     return std::make_shared<store::Table>(handle.createTable(name, std::move(schema)));
 }
@@ -97,15 +96,11 @@ void RemoteCounter::requestNewBatch(store::ClientHandle& handle) {
             nextCounter = static_cast<uint64_t>(mCounterTable->field<int64_t>(gCounterFieldName, tuple->data()));
             
             auto counterTuple = createCounterTuple(nextCounter + RESERVED_BATCH);
-            counterTuple["__partition_key"] = handle.getPartitionToken(*mCounterTable, mCounterId);
-
             counterFuture = handle.update(*mCounterTable, mCounterId, tuple->version(), std::move(counterTuple));
         } else if (getFuture->error() == store::error::not_found) {
             nextCounter = 0x0u;
 
             auto counterTuple = createCounterTuple(RESERVED_BATCH);
-            counterTuple["__partition_key"] = handle.getPartitionToken(*mCounterTable, mCounterId);
-            
             counterFuture = handle.insert(*mCounterTable, mCounterId, 0x0u, std::move(counterTuple));
         } else {
             throw std::system_error(getFuture->error());

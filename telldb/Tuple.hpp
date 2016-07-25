@@ -99,6 +99,10 @@ public: // Access
     const id_t count() const {
         return mFields.size();
     }
+
+    void setPartitionToken(unsigned __int128 token) override {
+        (*this)["__partition_token"] = token;
+    }
 public:
     size_t size() const override;
     void serialize(char* dest) const override;

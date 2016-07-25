@@ -27,7 +27,9 @@
 #include <telldb/ScanQuery.hpp>
 #include <telldb/Transaction.hpp>
 #include <telldb/Exceptions.hpp>
+
 #include <tellstore/ClientManager.hpp>
+#include <tellstore/GenericTuple.hpp>
 
 using namespace tell::store;
 
@@ -243,10 +245,12 @@ void Transaction::writeUndoLog(std::pair<size_t, uint8_t*> log) {
         for (uint64_t chunkNum = 0; sizeWritten < log.first; ++chunkNum) {
             auto chunkKey = (key | (chunkNum << 48));
             auto toWrite = std::min(log.first - sizeWritten, gMaxUndoLogSize);
-            responses.emplace_back(mHandle.insert(mContext.clientTable->txTable(), chunkKey, 0, {
-                        std::make_pair("value", crossbow::string(reinterpret_cast<char*>(log.second) + sizeWritten,
-                                toWrite))
-                    }));
+            auto table = mContext.clientTable->txTable();
+            responses.emplace_back(
+                mHandle.insert(table, chunkKey, 0, store::GenericTuple({
+                    std::make_pair("value", crossbow::string(reinterpret_cast<char*>(log.second) + sizeWritten, toWrite)),
+                }))
+            );
             sizeWritten += toWrite;
         }
         for (auto i = responses.rbegin(); i != responses.rend(); ++i) {
@@ -254,10 +258,10 @@ void Transaction::writeUndoLog(std::pair<size_t, uint8_t*> log) {
             LOG_ASSERT(res, "Writeback did not succeed");
         }
     } else {
-        auto resp = mHandle.insert(
-            mContext.clientTable->txTable(), key, 0, 
-            { std::make_pair("value", crossbow::string(reinterpret_cast<char*>(log.second), log.first)) }
-        );
+        auto table = mContext.clientTable->txTable();
+        auto resp = mHandle.insert(table, key, 0, store::GenericTuple({ 
+            std::make_pair("value", crossbow::string(reinterpret_cast<char*>(log.second), log.first)),
+        }));
         __attribute__((unused)) auto res = resp->waitForResult();
         LOG_ASSERT(res, "Writeback did not succeed");
     }

@@ -47,7 +47,6 @@ void ClientTable::init(store::ClientHandle& handle) {
     std::uniform_int_distribution<uint64_t> dist;
     store::Schema schema(store::TableType::NON_TRANSACTIONAL);
     schema.addField(store::FieldType::BLOB, "value", true);
-    schema.addField(store::FieldType::HASH128, "__partition_key", true);
 
     while (true) {
         auto clientsTableResp = handle.getTable("__clients");
@@ -68,8 +67,7 @@ void ClientTable::init(store::ClientHandle& handle) {
         mClientId = dist(rd);
         // try to insert the client
         auto tuple = store::GenericTuple({
-            std::make_pair<crossbow::string, boost::any>("value", crossbow::string()),
-            std::make_pair<crossbow::string, boost::any>("__partition_key", handle.getPartitionToken(*mClientsTable, mClientId))
+            std::make_pair<crossbow::string, boost::any>("value", crossbow::string())
         });
         auto insertResp = handle.insert(*mClientsTable, mClientId, 0, tuple);
         if (!insertResp->error()) {
