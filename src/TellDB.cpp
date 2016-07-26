@@ -47,6 +47,7 @@ void ClientTable::init(store::ClientHandle& handle) {
     std::uniform_int_distribution<uint64_t> dist;
     store::Schema schema(store::TableType::NON_TRANSACTIONAL);
     schema.addField(store::FieldType::BLOB, "value", true);
+    schema.addField(store::FieldType::HASH128, "__partition_token", false);
 
     while (true) {
         auto clientsTableResp = handle.getTable("__clients");

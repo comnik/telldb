@@ -66,6 +66,8 @@ int main(int argc, const char** argv) {
             tell::store::Schema schema(tell::store::TableType::TRANSACTIONAL);
             schema.addField(tell::store::FieldType::INT, "foo", true);
             schema.addField(tell::store::FieldType::TEXT, "bar", false);
+            schema.addField(tell::store::FieldType::HASH128, "__partition_token", false);
+            
             auto tid = tx.createTable("foo", schema);
             for (int32_t i = 0; i < 100; ++i) {
                 tx.insert(tid, tell::db::key_t{uint64_t(i)},
@@ -116,7 +118,10 @@ int main(int argc, const char** argv) {
         auto transaction = [](tell::db::Transaction& tx) {
             tell::store::Schema schema(tell::store::TableType::TRANSACTIONAL);
             schema.addField(tell::store::FieldType::INT, "field", true);
+            schema.addField(tell::store::FieldType::HASH128, "__partition_token", false);
+
             schema.addIndex("idx", std::make_pair(true, std::vector<tell::store::Schema::id_t>{schema.idOf("field")}));
+            
             auto tid = tx.createTable("idx_table", schema);
             for (int32_t i = 0; i < 1000; ++i) {
                 tx.insert(tid, tell::db::key_t{uint64_t(i)},
