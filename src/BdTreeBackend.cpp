@@ -160,9 +160,9 @@ void BdTreePointerTable::remove(bdtree::logical_pointer lptr, uint64_t version, 
 
 store::Table BdTreeNodeTable::createTable(store::ClientHandle& handle, const crossbow::string& name) {
     store::Schema schema(store::TableType::NON_TRANSACTIONAL);
+    schema.addField(store::FieldType::HASH128, "__partition_token", true);
     schema.addField(store::FieldType::BLOB, gNodeFieldName, true);
-    schema.addField(store::FieldType::HASH128, "__partition_token", false);
-
+ 
     return handle.createTable(name, std::move(schema));
 }
 

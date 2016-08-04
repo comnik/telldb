@@ -162,18 +162,22 @@ void Transaction::insert(table_t table, key_t key, const std::unordered_map<cros
     auto numFixedSize = schema.fixedSizeFields().size();
     const auto& fixedSizeFields = schema.fixedSizeFields();
 
-    auto setField = [&tuple, &values] (Schema::id_t idx, const store::Field& field) {
-        auto iter = values.find(field.name());
-        if (iter == values.end() || iter->second.type() == store::FieldType::NULLTYPE) {
-            if (field.isNotNull()) {
-                throw FieldNotSet(field.name());
-            }
-            tuple[idx] = nullptr;
+    auto setField = [&t, &key, &tuple, &values] (Schema::id_t idx, const store::Field& field) {
+        if (field.name() == "__partition_token") {
+            tuple[idx] = HashRing_t::getPartitionToken(t->tableId(), key);
         } else {
-            if (field.type() != iter->second.type()) {
-                throw WrongFieldType(field.name());
+            auto iter = values.find(field.name());
+            if (iter == values.end() || iter->second.type() == store::FieldType::NULLTYPE) {
+                if (field.isNotNull()) {
+                    throw FieldNotSet(field.name());
+                }
+                tuple[idx] = nullptr;
+            } else {
+                if (field.type() != iter->second.type()) {
+                    throw WrongFieldType(field.name());
+                }
+                tuple[idx] = iter->second;
             }
-            tuple[idx] = iter->second;
         }
     };
 
