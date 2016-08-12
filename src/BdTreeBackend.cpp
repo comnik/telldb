@@ -31,6 +31,20 @@ namespace tell {
 namespace db {
 namespace {
 
+// crossbow::string writeHash(unsigned __int128 hash) {
+//     unsigned __int128 tmp = hash;
+//     char buffer[128];
+//     char* d = std::end( buffer );
+    
+//     do {
+//         --d;
+//         *d = "0123456789"[tmp % 10];
+//         tmp /= 10;
+//     } while (tmp != 0);
+    
+//     int len = std::end( buffer ) - d;
+//     return crossbow::string(d, len);
+// }
 
 const crossbow::string gPointerFieldName = "pptr";
 
@@ -138,6 +152,7 @@ std::tuple<bdtree::physical_pointer, uint64_t> BdTreePointerTable::read(bdtree::
         return std::make_tuple(bdtree::physical_pointer{0x0u}, 0x0u);
 
     auto pptr = mTable.table().field<int64_t>(gPointerFieldName, tuple->data());
+    // auto token = mTable.table().field<unsigned __int128>("__partition_token", tuple->data());
     return std::make_tuple(bdtree::physical_pointer{static_cast<uint64_t>(pptr)}, tuple->version());
 }
 

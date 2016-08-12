@@ -39,7 +39,7 @@ store::GenericTuple createCounterTuple(uint64_t counter) {
 std::shared_ptr<store::Table> RemoteCounter::createTable(store::ClientHandle& handle, const crossbow::string& name) {
     store::Schema schema(store::TableType::NON_TRANSACTIONAL);
     schema.addField(store::FieldType::BIGINT, gCounterFieldName, true);
-    schema.addField(store::FieldType::HASH128, "__partition_token", false);
+    schema.addField(store::FieldType::HASH128, "__partition_token", true);
 
     return std::make_shared<store::Table>(handle.createTable(name, std::move(schema)));
 }
