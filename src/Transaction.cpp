@@ -31,7 +31,10 @@
 #include <tellstore/ClientManager.hpp>
 #include <tellstore/GenericTuple.hpp>
 
+#include <commitmanager/HashRing.hpp>
+
 using namespace tell::store;
+using HashRing_t = tell::commitmanager::HashRing;
 
 namespace tell {
 namespace db {

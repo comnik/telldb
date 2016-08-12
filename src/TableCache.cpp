@@ -72,7 +72,7 @@ TableCache::~TableCache() {
 }
 
 Future<Tuple> TableCache::get(key_t key) {
-    {
+    {   
         auto iter = mChanges.find(key);
         if (iter != mChanges.end()) {
             if (std::get<1>(iter->second) == Operation::Delete) {
