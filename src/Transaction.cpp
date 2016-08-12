@@ -85,8 +85,7 @@ Transaction::Transaction(ClientHandle& handle, TellDBContext& context,
     , mSnapshot(std::move(snapshot))
     , mCache(new (&mPool) TransactionCache(context, mHandle, *mSnapshot, mPool))
     , mType(type)
-{
-}
+{}
 
 crossbow::ChunkMemoryPool& Transaction::pool() {
     return mPool;
