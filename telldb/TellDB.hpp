@@ -135,8 +135,8 @@ private: // private access
                     context.mContext.setIndexes(impl::createIndexes(handle));
                 }
                 try {
-                    auto clusterState = handle.startTransaction(type);
-                    Transaction transaction(handle, context.mContext, std::move(clusterState->snapshot), type);
+                    auto snapshot = handle.startTransaction(type);
+                    Transaction transaction(handle, context.mContext, std::move(snapshot), type);
                     context.executeHandler(fun, transaction);
                 } catch (std::exception& e) {
                     std::cerr << "Exception: " << e.what() << std::endl;
@@ -151,8 +151,8 @@ private: // private access
                     context.mContext.setIndexes(impl::createIndexes(handle));
                 }
                 try {
-                    auto clusterState = handle.startTransaction(type);
-                    Transaction transaction(handle, context.mContext, std::move(clusterState->snapshot), type);
+                    auto snapshot = handle.startTransaction(type);
+                    Transaction transaction(handle, context.mContext, std::move(snapshot), type);
                     context.executeHandler(fun, transaction);
                 } catch (std::exception& e) {
                     std::cerr << "Exception: " << e.what() << std::endl;
@@ -242,11 +242,11 @@ public:
     {
         store::TransactionRunner::executeBlocking(mClientManager,
                 [this](store::ClientHandle &handle, impl::FiberContext<Context>&){
-            auto clusterState = handle.startTransaction();
+            auto snapshot = handle.startTransaction();
             
             mClientTable.init(handle);
             
-            handle.commit(*clusterState->snapshot);
+            handle.commit(*snapshot);
         });
     }
 
